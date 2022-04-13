@@ -1,16 +1,16 @@
 package user
 
-type UserReq struct {
+type Req struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Username string `json:"username"`
 }
 
 type Request struct {
-	User UserReq `json:"user"`
+	User Req `json:"user"`
 }
 
-type UserRes struct {
+type Res struct {
 	Email    string      `json:"email"`
 	Username string      `json:"username"`
 	Bio      interface{} `json:"bio"`
@@ -19,9 +19,9 @@ type UserRes struct {
 }
 
 type Response struct {
-	User UserRes `json:"user"`
+	User Res `json:"user"`
 }
 
 func NewRequest(email string, password string, userName string) *Request {
-	return &Request{User: UserReq{Email: email, Password: password, Username: userName}}
+	return &Request{User: Req{Email: email, Password: password, Username: userName}}
 }
