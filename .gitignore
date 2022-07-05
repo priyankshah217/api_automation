@@ -6,3 +6,5 @@
 *.test
 *.out
 !/target/
+!/bin/
+!/bin/golangci-lint

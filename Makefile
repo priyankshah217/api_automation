@@ -1,3 +1,7 @@
+golangci-lint:
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
+	./bin/golangci-lint run ./...
+
 go-test-run:
 	go install gotest.tools/gotestsum@latest
 	@mkdir -vp "./target" "./target/allure-results"
