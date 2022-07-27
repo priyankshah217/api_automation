@@ -10,10 +10,10 @@ import (
 )
 
 func CreateUser(userRequest *user.Request) (*user.Response, error) {
-	headers := header.GetJsonHeader()
-	response, err := api.NewClient().Post(constant.USER_ENDPOINT, headers, userRequest)
+	headers := header.GetJSONHeader()
+	response, err := api.NewClient().Post(constant.UserEndpoint, headers, userRequest)
 	if err != nil {
-		return nil, fmt.Errorf("error in creating user: %v", err)
+		return nil, fmt.Errorf("error in creating user: %w", err)
 	}
 	var userResponse *user.Response
 	err = json.Unmarshal(response, &userResponse)

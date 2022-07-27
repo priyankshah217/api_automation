@@ -7,9 +7,9 @@ import (
 
 type ICustomClient interface {
 	Do(*http.Request) (*http.Response, error)
-	SendHttpRequest(string, string, header.Header, []byte) ([]byte, error)
+	SendHTTPRequest(string, string, header.Header, []byte) ([]byte, error)
 }
 
-type CustomHttp struct {
+type CustomHTTP struct {
 	h *http.Client
 }

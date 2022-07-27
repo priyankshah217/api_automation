@@ -2,23 +2,23 @@ package http
 
 import (
 	"api_automation/header"
-	"io"
+	"context"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 )
 
-func (ch *CustomHttp) Do(req *http.Request) (*http.Response, error) {
+func (ch *CustomHTTP) Do(req *http.Request) (*http.Response, error) {
 	return ch.h.Do(req)
 }
 
-func NewCustomHttp() *CustomHttp {
-	return &CustomHttp{h: http.DefaultClient}
+func NewCustomHTTP() *CustomHTTP {
+	return &CustomHTTP{h: http.DefaultClient}
 }
 
-func (ch *CustomHttp) SendHttpRequest(methodName string, url string, headers header.Header, bytes []byte) ([]byte, error) {
-	req, err := http.NewRequest(methodName, url, strings.NewReader(string(bytes)))
+func (ch *CustomHTTP) SendHTTPRequest(name string, url string, headers header.Header, bytes []byte) ([]byte, error) {
+	req, err := http.NewRequestWithContext(context.Background(), name, url, strings.NewReader(string(bytes)))
 	if err != nil {
 		log.Fatalf("error while creating request: %v", err)
 		return nil, err
@@ -31,16 +31,9 @@ func (ch *CustomHttp) SendHttpRequest(methodName string, url string, headers hea
 		log.Fatalf("error while making request: %v", err)
 		return nil, err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatalf("error while closing body: %v", err)
-		}
-	}(res.Body)
-
+	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatalf("error while reading body: %v", err)
 		return nil, err
 	}
 	return body, nil

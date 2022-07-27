@@ -13,5 +13,5 @@ type IClient interface {
 }
 
 type Client struct {
-	ch *customHttp.CustomHttp
+	ch *customHttp.CustomHTTP
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Client) Get(url string, headers header.Header) ([]byte, error) {
-	body, err := c.ch.SendHttpRequest(http.MethodGet, url, headers, nil)
+	body, err := c.ch.SendHTTPRequest(http.MethodGet, url, headers, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func (c *Client) Post(url string, headers header.Header, payload interface{}) ([
 	if err != nil {
 		return nil, err
 	}
-	body, err := c.ch.SendHttpRequest(http.MethodPost, url, headers, bytes)
+	body, err := c.ch.SendHTTPRequest(http.MethodPost, url, headers, bytes)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (c *Client) Put(url string, headers header.Header, payload interface{}) ([]
 	if err != nil {
 		return nil, err
 	}
-	body, err := c.ch.SendHttpRequest(http.MethodPut, url, headers, bytes)
+	body, err := c.ch.SendHTTPRequest(http.MethodPut, url, headers, bytes)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (c *Client) Put(url string, headers header.Header, payload interface{}) ([]
 }
 
 func (c *Client) Delete(url string, headers header.Header) ([]byte, error) {
-	body, err := c.ch.SendHttpRequest(http.MethodDelete, url, headers, nil)
+	body, err := c.ch.SendHTTPRequest(http.MethodDelete, url, headers, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -48,5 +48,5 @@ func (c *Client) Delete(url string, headers header.Header) ([]byte, error) {
 }
 
 func NewClient() IClient {
-	return &Client{ch: customHttp.NewCustomHttp()}
+	return &Client{ch: customHttp.NewCustomHTTP()}
 }

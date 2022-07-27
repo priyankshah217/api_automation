@@ -2,7 +2,7 @@ package header
 
 type Header map[string]string
 
-func GetJsonHeader() Header {
+func GetJSONHeader() Header {
 	return Header{
 		"content-type": "application/json",
 	}

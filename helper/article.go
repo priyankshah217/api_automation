@@ -10,9 +10,9 @@ import (
 )
 
 func CreateArticle(token string, articleRequest *article.Request) (*article.Response, error) {
-	headers := header.GetJsonHeader()
+	headers := header.GetJSONHeader()
 	headers["authorization"] = "Token " + token
-	response, err := api.NewClient().Post(constant.ARTICLE_ENDPOINT, headers, articleRequest)
+	response, err := api.NewClient().Post(constant.ArticleEndpoint, headers, articleRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -25,10 +25,10 @@ func CreateArticle(token string, articleRequest *article.Request) (*article.Resp
 }
 
 func UpdateArticle(token string, articleToBeUpdatedRequest *article.Response) (*article.Response, error) {
-	headers := header.GetJsonHeader()
+	headers := header.GetJSONHeader()
 	headers["authorization"] = "Token " + token
-	updateArticleUrl := fmt.Sprintf("%s/%s", constant.ARTICLE_ENDPOINT, articleToBeUpdatedRequest.Article.Slug)
-	response, err := api.NewClient().Put(updateArticleUrl, headers, articleToBeUpdatedRequest)
+	updateArticleURL := fmt.Sprintf("%s/%s", constant.ArticleEndpoint, articleToBeUpdatedRequest.Article.Slug)
+	response, err := api.NewClient().Put(updateArticleURL, headers, articleToBeUpdatedRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -41,9 +41,9 @@ func UpdateArticle(token string, articleToBeUpdatedRequest *article.Response) (*
 }
 
 func DeleteArticle(token string, articleID string) (*article.Response, error) {
-	headers := header.GetJsonHeader()
+	headers := header.GetJSONHeader()
 	headers["authorization"] = "Token " + token
-	response, err := api.NewClient().Delete(constant.ARTICLE_ENDPOINT+"/"+articleID, headers)
+	response, err := api.NewClient().Delete(constant.ArticleEndpoint+"/"+articleID, headers)
 	if err != nil {
 		return nil, err
 	}
@@ -56,16 +56,16 @@ func DeleteArticle(token string, articleID string) (*article.Response, error) {
 }
 
 func GetArticle(token string, articleID string) (*article.Response, error) {
-	headers := header.GetJsonHeader()
+	headers := header.GetJSONHeader()
 	headers["authorization"] = "Token " + token
-	response, err := api.NewClient().Get(constant.ARTICLE_ENDPOINT+"/"+articleID, headers)
+	response, err := api.NewClient().Get(constant.ArticleEndpoint+"/"+articleID, headers)
 	if err != nil {
 		return nil, err
 	}
 	var articleResponse *article.Response
 	err = json.Unmarshal(response, articleResponse)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	return articleResponse, nil
 }
