@@ -3,60 +3,72 @@ package helper
 import (
 	"api_automation/constant"
 	"api_automation/entity/article"
-	"api_automation/entity/user"
 	"api_automation/http"
-	"api_automation/testcontext"
-	"context"
 	"encoding/json"
+	"fmt"
 )
 
-func CreateArticle(ctx context.Context, articleRequest *article.Request) context.Context {
-	userResponse := ctx.Value(testcontext.UserResponse{}).(user.Response)
+func CreateArticle(token string, articleRequest *article.Request) (*article.Response, error) {
 	headers := make(map[string]string)
 	headers["content-type"] = "application/json"
-	headers["authorization"] = "Token " + userResponse.User.Token
-	response := http.PostRequest(constant.ARTICLE_ENDPOINT, headers, articleRequest)
-	var articleResponse article.Response
-	err := json.Unmarshal(response, &articleResponse)
+	headers["authorization"] = "Token " + token
+	response, err := http.PostRequest(constant.ARTICLE_ENDPOINT, headers, articleRequest)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return context.WithValue(ctx, testcontext.ArticleResponse{}, articleResponse)
+	var articleResponse *article.Response
+	err = json.Unmarshal(response, &articleResponse)
+	if err != nil {
+		return nil, err
+	}
+	return articleResponse, nil
 }
 
-func UpdateArticle(ctx context.Context, articleToBeUpdatedRequest article.Response) context.Context {
-	userResponse := ctx.Value(testcontext.UserResponse{}).(user.Response)
+func UpdateArticle(token string, articleToBeUpdatedRequest *article.Response) (*article.Response, error) {
 	headers := make(map[string]string)
 	headers["content-type"] = "application/json"
-	headers["authorization"] = "Token " + userResponse.User.Token
-	response := http.PutRequest(constant.ARTICLE_ENDPOINT+"/"+articleToBeUpdatedRequest.Article.Slug, headers, articleToBeUpdatedRequest)
-	var articleResponse article.Response
-	err := json.Unmarshal(response, &articleResponse)
+	headers["authorization"] = "Token " + token
+	updateArticleUrl := fmt.Sprintf("%s/%s", constant.ARTICLE_ENDPOINT, articleToBeUpdatedRequest.Article.Slug)
+	response, err := http.PutRequest(updateArticleUrl, headers, articleToBeUpdatedRequest)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return context.WithValue(ctx, testcontext.ArticleResponse{}, articleResponse)
+	var articleResponse *article.Response
+	err = json.Unmarshal(response, &articleResponse)
+	if err != nil {
+		return nil, err
+	}
+	return articleResponse, nil
 }
 
-func DeleteArticle(ctx context.Context, articleID string) context.Context {
-	userResponse := ctx.Value(testcontext.UserResponse{}).(user.Response)
+func DeleteArticle(token string, articleID string) (*article.Response, error) {
 	headers := make(map[string]string)
 	headers["content-type"] = "application/json"
-	headers["authorization"] = "Token " + userResponse.User.Token
-	response := http.DeleteRequest(constant.ARTICLE_ENDPOINT+"/"+articleID, headers)
-	return context.WithValue(ctx, testcontext.ArticleResponse{}, response)
+	headers["authorization"] = "Token " + token
+	response, err := http.DeleteRequest(constant.ARTICLE_ENDPOINT+"/"+articleID, headers)
+	if err != nil {
+		return nil, err
+	}
+	var articleResponse *article.Response
+	err = json.Unmarshal(response, &articleResponse)
+	if err != nil {
+		return nil, err
+	}
+	return articleResponse, nil
 }
 
-func GetArticle(ctx context.Context, articleID string) context.Context {
-	userResponse := ctx.Value(testcontext.UserResponse{}).(user.Response)
+func GetArticle(token string, articleID string) (*article.Response, error) {
 	headers := make(map[string]string)
 	headers["content-type"] = "application/json"
-	headers["authorization"] = "Token " + userResponse.User.Token
-	response := http.GetRequest(constant.ARTICLE_ENDPOINT+"/"+articleID, headers)
-	var articleResponse article.Response
-	err := json.Unmarshal(response, &articleResponse)
+	headers["authorization"] = "Token " + token
+	response, err := http.GetRequest(constant.ARTICLE_ENDPOINT+"/"+articleID, headers)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return context.WithValue(ctx, testcontext.ArticleResponse{}, articleResponse)
+	var articleResponse *article.Response
+	err = json.Unmarshal(response, articleResponse)
+	if err != nil {
+		return nil, nil
+	}
+	return articleResponse, nil
 }
