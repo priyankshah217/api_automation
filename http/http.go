@@ -27,7 +27,7 @@ func (ch *CustomHTTP) SendHTTPRequest(name string, url string, headers header.He
 		req.Header.Add(k, v)
 	}
 	res, err := ch.Do(req)
-	if res.StatusCode >= http.StatusBadRequest || err != nil {
+	if err != nil {
 		log.Fatalf("error while making request: %v, method name : %v", err, name)
 		return nil, err
 	}
