@@ -1,83 +1,120 @@
 package tests
 
 import (
+	"api_automation/actor"
 	"api_automation/entity/article"
 	"api_automation/entity/user"
-	"api_automation/helper"
-	"api_automation/testcontext"
-	"context"
-	"fmt"
 	"github.com/bxcodec/faker/v3"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
-func Test_CreateArticle(t *testing.T) {
-	ctx := context.Background()
-	userRequest := user.NewRequest(faker.Email(), "123456", faker.FirstName())
-	ctx = helper.CreateUser(ctx, userRequest)
-	articleTitle := faker.Name()
-	articleDesc := faker.Sentence()
-	articleBody := faker.Sentence()
-	articleRequest := article.NewRequest(article.Article(struct {
-		TagList     []string
-		Title       string
-		Description string
-		Body        string
-	}{TagList: []string{"Java", "Python"}, Title: articleTitle, Description: articleDesc, Body: articleBody}))
-	ctx = helper.CreateArticle(ctx, articleRequest)
-	articleResponse := ctx.Value(testcontext.ArticleResponse{}).(article.Response)
-	assert.Equal(t, articleTitle, articleResponse.Article.Title, "title does not match")
-	assert.Equal(t, articleBody, articleResponse.Article.Body, "body does not match")
-	assert.Equal(t, articleDesc, articleResponse.Article.Description, "description does not match")
+func TestCustomTestSuite(t *testing.T) {
+	suite.Run(t, new(CustomTestSuite))
 }
 
-func Test_UpdateArticle(t *testing.T) {
-	ctx := context.Background()
-	userRequest := user.NewRequest(faker.Email(), "123456", faker.FirstName())
-	ctx = helper.CreateUser(ctx, userRequest)
+func (t *CustomTestSuite) Test_CreateArticle() {
+	// Arrange
+	u := user.
+		NewBuilder().
+		SetEmail(faker.Email()).
+		SetPassword("123456").
+		SetUsername(faker.FirstName()).
+		Build()
 	articleTitle := faker.Name()
-	articleDesc := faker.Sentence()
 	articleBody := faker.Sentence()
-	articleRequest := article.NewRequest(article.Article(struct {
-		TagList     []string
-		Title       string
-		Description string
-		Body        string
-	}{TagList: []string{"Java", "Python"}, Title: articleTitle, Description: articleDesc, Body: articleBody}))
-	ctx = helper.CreateArticle(ctx, articleRequest)
-	articleToBeUpdated := ctx.Value(testcontext.ArticleResponse{}).(article.Response)
+	articleDesc := faker.Sentence()
+	a := article.
+		NewBuilder().
+		SetTagList([]string{"Java", "Python"}).
+		SetTitle(articleTitle).
+		SetDescription(articleDesc).
+		SetBody(articleBody).
+		Build()
+
+	// Act
+	admin := actor.NewAdmin()
+	newUser, err := admin.CreateUser(u)
+	t.Require().Nil(err, "error in creating user")
+	response, err := newUser.CreateArticle(a)
+
+	// Assert
+	t.Require().Nil(err, "error in creating article")
+	t.Require().Equal(articleTitle, response.Article.Title, "title does not match")
+	t.Require().Equal(articleBody, response.Article.Body, "body does not match")
+	t.Require().Equal(articleDesc, response.Article.Description, "description does not match")
+}
+
+func (t *CustomTestSuite) Test_UpdateArticle() {
+	// Arrange
+	u := user.
+		NewBuilder().
+		SetEmail(faker.Email()).
+		SetPassword("123456").
+		SetUsername(faker.FirstName()).
+		Build()
+	articleTitle := faker.Name()
+	articleBody := faker.Sentence()
+	articleDesc := faker.Sentence()
+	a := article.
+		NewBuilder().
+		SetTagList([]string{"Java", "Python"}).
+		SetTitle(articleTitle).
+		SetDescription(articleDesc).
+		SetBody(articleBody).
+		Build()
+	admin := actor.NewAdmin()
+	newUser, err := admin.CreateUser(u)
+	t.Require().Nil(err, "error in creating user")
+	articleToBeUpdated, err := newUser.CreateArticle(a)
+	t.Require().Nil(err, "error in creating article")
+
+	// Act
 	updatedArticleTitle := faker.Name()
 	updatedArticleDesc := faker.Sentence()
 	updatedArticleBody := faker.Sentence()
 	articleToBeUpdated.Article.Title = updatedArticleTitle
 	articleToBeUpdated.Article.Description = updatedArticleDesc
 	articleToBeUpdated.Article.Body = updatedArticleBody
-	ctx = helper.UpdateArticle(ctx, articleToBeUpdated)
-	updatedArticleResponse := ctx.Value(testcontext.ArticleResponse{}).(article.Response)
-	assert.Equal(t, updatedArticleTitle, updatedArticleResponse.Article.Title, "title was not updated")
-	assert.Equal(t, updatedArticleBody, updatedArticleResponse.Article.Body, "body was not updated")
-	assert.Equal(t, updatedArticleDesc, updatedArticleResponse.Article.Description, "description was not updated")
+	updateArticle, err := newUser.UpdateArticle(articleToBeUpdated)
+
+	// Assert
+	t.Require().Nil(err, "error in updating article")
+	t.Require().Equal(updatedArticleTitle, updateArticle.Article.Title, "title does not match")
+	t.Require().Equal(updatedArticleDesc, updateArticle.Article.Description, "description does not match")
+	t.Require().Equal(updatedArticleBody, updateArticle.Article.Body, "body does not match")
 }
 
-func Test_DeleteArticle(t *testing.T) {
-	ctx := context.Background()
-	userRequest := user.NewRequest(faker.Email(), "123456", faker.FirstName())
-	ctx = helper.CreateUser(ctx, userRequest)
+func (t *CustomTestSuite) Test_DeleteArticle() {
+	// Arrange
+	u := user.
+		NewBuilder().
+		SetEmail(faker.Email()).
+		SetPassword("123456").
+		SetUsername(faker.FirstName()).
+		Build()
 	articleTitle := faker.Name()
-	articleDesc := faker.Sentence()
 	articleBody := faker.Sentence()
-	articleRequest := article.NewRequest(article.Article(struct {
-		TagList     []string
-		Title       string
-		Description string
-		Body        string
-	}{TagList: []string{"Java", "Python"}, Title: articleTitle, Description: articleDesc, Body: articleBody}))
-	ctx = helper.CreateArticle(ctx, articleRequest)
-	articleToBeDeleted := ctx.Value(testcontext.ArticleResponse{}).(article.Response)
-	ctx = helper.DeleteArticle(ctx, articleToBeDeleted.Article.Slug)
-	ctx = helper.GetArticle(ctx, articleToBeDeleted.Article.Slug)
-	articleResponse := ctx.Value(testcontext.ArticleResponse{}).(article.Response)
-	fmt.Println(articleResponse.Article.Author)
-	assert.Equal(t, "", articleResponse.Article.Author.Username, "article not deleted")
+	articleDesc := faker.Sentence()
+	a := article.
+		NewBuilder().
+		SetTagList([]string{"Java", "Python"}).
+		SetTitle(articleTitle).
+		SetDescription(articleDesc).
+		SetBody(articleBody).
+		Build()
+	admin := actor.NewAdmin()
+	newUser, err := admin.CreateUser(u)
+	t.Require().Nil(err, "error in creating user")
+	articleToBeDeleted, err := newUser.CreateArticle(a)
+	t.Require().Nil(err, "error in creating article")
+
+	// Act
+	deletedArticle, err := newUser.DeleteArticle(articleToBeDeleted.Article.Slug)
+
+	// Assert
+	t.Require().Nil(err, "error in deleting article")
+	getArticle, err := newUser.GetArticle(deletedArticle.Article.Slug)
+	t.Require().Nil(err, "error in getting article")
+	t.Require().Equal("", getArticle.Article.Author.Username, "article should be deleted")
 }

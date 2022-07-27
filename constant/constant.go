@@ -1,6 +1,6 @@
 package constant
 
 const (
-	USER_ENDPOINT    = "https://api.realworld.io/api/users"
-	ARTICLE_ENDPOINT = "https://api.realworld.io/api/articles"
+	UserEndpoint    = "https://api.realworld.io/api/users"
+	ArticleEndpoint = "https://api.realworld.io/api/articles"
 )

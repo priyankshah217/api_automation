@@ -5,6 +5,7 @@
 *.dylib
 *.test
 *.out
-!/target/
-!/bin/
-!/bin/golangci-lint
+/target/
+/bin/
+/bin/golangci-lint
+.idea

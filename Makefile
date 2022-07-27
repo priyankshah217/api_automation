@@ -1,6 +1,6 @@
 golangci-lint:
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.46.2
-	./bin/golangci-lint run ./...
+	./bin/golangci-lint run ./... --out-format checkstyle
 
 go-test-run:
 	go install gotest.tools/gotestsum@latest
