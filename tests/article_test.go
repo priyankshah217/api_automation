@@ -111,5 +111,5 @@ func (t *CustomTestSuite) Test_DeleteArticle() {
 	t.Require().Nil(err, "error in deleting article")
 	getArticle, err := newUser.GetArticle(deletedArticle.Article.Slug)
 	t.Require().Nil(err, "error in getting article")
-	t.Require().Nil(getArticle, "article should be deleted")
+	t.Require().Equal("", getArticle.Article.Author.Username, "article should be deleted")
 }

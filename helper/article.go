@@ -63,7 +63,7 @@ func GetArticle(token string, articleID string) (*article.Response, error) {
 		return nil, err
 	}
 	var articleResponse *article.Response
-	err = json.Unmarshal(response, articleResponse)
+	err = json.Unmarshal(response, &articleResponse)
 	if err != nil {
 		return nil, err
 	}

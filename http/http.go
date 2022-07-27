@@ -13,7 +13,7 @@ func (ch *CustomHTTP) Do(req *http.Request) (*http.Response, error) {
 	return ch.h.Do(req)
 }
 
-func NewCustomHTTP() *CustomHTTP {
+func NewCustomHTTP() ICustomClient {
 	return &CustomHTTP{h: http.DefaultClient}
 }
 
@@ -27,8 +27,8 @@ func (ch *CustomHTTP) SendHTTPRequest(name string, url string, headers header.He
 		req.Header.Add(k, v)
 	}
 	res, err := ch.Do(req)
-	if err != nil {
-		log.Fatalf("error while making request: %v", err)
+	if res.StatusCode >= http.StatusBadRequest || err != nil {
+		log.Fatalf("error while making request: %v, method name : %v", err, name)
 		return nil, err
 	}
 	defer res.Body.Close()
