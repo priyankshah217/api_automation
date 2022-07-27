@@ -1,7 +1,7 @@
 package http
 
 import (
-	"encoding/json"
+	"api_automation/header"
 	"io"
 	"io/ioutil"
 	"log"
@@ -9,71 +9,16 @@ import (
 	"strings"
 )
 
-func PostRequest(url string, headers map[string]string, payload interface{}) ([]byte, error) {
-	bytes, err := json.Marshal(payload)
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, strings.NewReader(string(bytes)))
-	if err != nil {
-		log.Fatalf("error while creating request: %v", err)
-		return nil, err
-	}
-	for k, v := range headers {
-		req.Header.Add(k, v)
-	}
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatalf("error while making request: %v", err)
-		return nil, err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatalf("error while closing body: %v", err)
-		}
-	}(res.Body)
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Fatalf("error while reading body: %v", err)
-		return nil, err
-	}
-	return body, nil
+func (ch *CustomHttp) Do(req *http.Request) (*http.Response, error) {
+	return ch.h.Do(req)
 }
 
-func PutRequest(url string, headers map[string]string, payload interface{}) ([]byte, error) {
-	bytes, err := json.Marshal(payload)
-	client := &http.Client{}
-	req, err := http.NewRequest("PUT", url, strings.NewReader(string(bytes)))
-	if err != nil {
-		log.Fatalf("error while creating request: %v", err)
-		return nil, err
-	}
-	for k, v := range headers {
-		req.Header.Add(k, v)
-	}
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatalf("error while making request: %v", err)
-		return nil, err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatalf("error while closing body: %v", err)
-		}
-	}(res.Body)
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Fatalf("error while reading body: %v", err)
-		return nil, err
-	}
-	return body, nil
+func NewCustomHttp() *CustomHttp {
+	return &CustomHttp{h: http.DefaultClient}
 }
 
-func DeleteRequest(url string, headers map[string]string) ([]byte, error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("DELETE", url, nil)
+func (ch *CustomHttp) SendHttpRequest(methodName string, url string, headers header.Header, bytes []byte) ([]byte, error) {
+	req, err := http.NewRequest(methodName, url, strings.NewReader(string(bytes)))
 	if err != nil {
 		log.Fatalf("error while creating request: %v", err)
 		return nil, err
@@ -81,37 +26,7 @@ func DeleteRequest(url string, headers map[string]string) ([]byte, error) {
 	for k, v := range headers {
 		req.Header.Add(k, v)
 	}
-	res, err := client.Do(req)
-	if err != nil {
-		log.Fatalf("error while making request: %v", err)
-		return nil, err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatalf("error while closing body: %v", err)
-		}
-	}(res.Body)
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Fatalf("error while reading body: %v", err)
-		return nil, err
-	}
-	return body, nil
-}
-
-func GetRequest(url string, headers map[string]string) ([]byte, error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		log.Fatalf("error while creating request: %v", err)
-		return nil, err
-	}
-	for k, v := range headers {
-		req.Header.Add(k, v)
-	}
-	res, err := client.Do(req)
+	res, err := ch.Do(req)
 	if err != nil {
 		log.Fatalf("error while making request: %v", err)
 		return nil, err
