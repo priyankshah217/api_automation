@@ -6,7 +6,7 @@ import (
 )
 
 type IAdmin interface {
-	CreateUser(*user.User) *User
+	CreateUser(*user.User) (*User, error)
 }
 
 type Admin struct {

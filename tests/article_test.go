@@ -34,7 +34,8 @@ func (t *CustomTestSuite) Test_CreateArticle() {
 
 	// Act
 	admin := actor.NewAdmin()
-	newUser := admin.CreateUser(u)
+	newUser, err := admin.CreateUser(u)
+	t.Require().Nil(err, "error in creating user")
 	response, err := newUser.CreateArticle(a)
 
 	// Assert
@@ -63,7 +64,8 @@ func (t *CustomTestSuite) Test_UpdateArticle() {
 		SetBody(articleBody).
 		Build()
 	admin := actor.NewAdmin()
-	newUser := admin.CreateUser(u)
+	newUser, err := admin.CreateUser(u)
+	t.Require().Nil(err, "error in creating user")
 	articleToBeUpdated, err := newUser.CreateArticle(a)
 	t.Require().Nil(err, "error in creating article")
 
@@ -102,7 +104,8 @@ func (t *CustomTestSuite) Test_DeleteArticle() {
 		SetBody(articleBody).
 		Build()
 	admin := actor.NewAdmin()
-	newUser := admin.CreateUser(u)
+	newUser, err := admin.CreateUser(u)
+	t.Require().Nil(err, "error in creating user")
 	articleToBeDeleted, err := newUser.CreateArticle(a)
 	t.Require().Nil(err, "error in creating article")
 

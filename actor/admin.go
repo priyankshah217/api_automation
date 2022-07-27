@@ -5,11 +5,11 @@ import (
 	"api_automation/helper"
 )
 
-func (a Admin) CreateUser(u *user.User) *User {
+func (a *Admin) CreateUser(u *user.User) (*User, error) {
 	request := user.NewRequest(u)
 	response, err := helper.CreateUser(request)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return &User{response, response.User.Token}
+	return &User{response, response.User.Token}, nil
 }
