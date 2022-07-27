@@ -111,6 +111,8 @@ func (t *CustomTestSuite) Test_DeleteArticle() {
 
 	// Act
 	deletedArticle, err := newUser.DeleteArticle(articleToBeDeleted.Article.Slug)
+
+	// Assert
 	t.Require().Nil(err, "error in deleting article")
 	getArticle, err := newUser.GetArticle(deletedArticle.Article.Slug)
 	t.Require().Nil(err, "error in getting article")
