@@ -9,7 +9,7 @@ type IBuilder interface {
 }
 
 type Builder struct {
-	a *Article
+	a Article
 }
 
 func NewBuilder() IBuilder {
@@ -37,5 +37,5 @@ func (b *Builder) SetBody(body string) IBuilder {
 }
 
 func (b *Builder) Build() *Article {
-	return b.a
+	return &b.a
 }

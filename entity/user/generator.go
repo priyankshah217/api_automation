@@ -8,7 +8,7 @@ type IBuilder interface {
 }
 
 type Builder struct {
-	u *User
+	u User
 }
 
 func NewBuilder() IBuilder {
@@ -31,5 +31,5 @@ func (b *Builder) SetUsername(username string) IBuilder {
 }
 
 func (b *Builder) Build() *User {
-	return b.u
+	return &b.u
 }
